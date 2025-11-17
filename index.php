@@ -1,18 +1,19 @@
 <?php
-/**
- * Point d'entrée de l'application
- * Redirige vers la page appropriée selon l'état de connexion
- */
-
 session_start();
+
+
+define('SECURE_ACCESS', true);
+
+
 require_once __DIR__ . '/require/config.php';
 
-// Vérifier si l'utilisateur est connecté
-if (isset($_SESSION['user'])) {
-    // Utilisateur connecté → rediriger vers le tableau de bord
-    header('Location: ' . BASE_URL . 'view/dashboard.php');
+
+if (isset($_SESSION['user']) && !empty($_SESSION['user']['id'])) {
+
+    header('Location: ' . _BASE_URL_ . 'view/dashboard.php');
+    exit;
 } else {
-    // Utilisateur non connecté → rediriger vers la page de connexion
-    header('Location: ' . BASE_URL . 'view/auth/login.php');
+    
+    header('Location: ' . _BASE_URL_ . 'view/auth/login.php');
+    exit;
 }
-exit;

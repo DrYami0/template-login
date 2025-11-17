@@ -1,73 +1,48 @@
 <?php
-/**
- * Configuration principale du projet
- * Fichier : require/config.php
- * À placer dans : /template-login/require/config.php
- */
 
-// === SÉCURITÉ : Empêcher l'accès direct ===
-if (!defined('SECURE_ACCESS')) {
-    die('Accès direct interdit.');
-}
-define('SECURE_ACCESS', true);
-
-/* ========================================
-   BASE DE DONNÉES (XAMPP / MySQL)
-   ======================================== */
-define('DB_HOST', '127.0.0.1');           // ou 'localhost'
+define('DB_HOST', '127.0.0.1');
 define('DB_PORT', '3306');
-define('DB_NAME', '2a10_projet');         // Nom de ta base
-define('DB_USER', 'root');                // XAMPP par défaut
-define('DB_PASS', '');                    // Mot de passe vide par défaut sur XAMPP
+define('DB_NAME', '2a10_projet');
+define('DB_USER', 'root');
+define('DB_PASS', '');
 define('DB_CHARSET', 'utf8mb4');
 
-/* ========================================
-   URL DE BASE DU PROJET
-   Exemple : http://localhost/template-login/
-   Doit TOUJOURS se terminer par un "/"
-   ======================================== */
-define('_BASE_URL_', '/template-login/');
-define('BASE_URL', _BASE_URL_); // Compatibilité avec ton code existant
 
-/* ========================================
-   ADMIN (pour notifications d'inscription)
-   ======================================== */
-define('ADMIN_EMAIL', 'louay.fkiri@esprit.tn');
+define('_BASE_URL_', 'http://localhost/template-login/');
+define('BASE_URL', rtrim(_BASE_URL_, '/') . '/');
 
-/* ========================================
-   MAILER : Envoi d'emails
-   'phpmail' → fonction mail() de PHP
-   'smtp'    → PHPMailer (recommandé pour Gmail)
-   ======================================== */
-define('MAILER', 'phpmail'); // Change en 'smtp' si tu veux Gmail
+define('ADMIN_EMAIL', 'louayfkiri06@gmail.com');
 
-/* ========================================
-   CONFIGURATION SMTP (uniquement si MAILER = 'smtp')
-   Exemple Gmail :
-   - Host: smtp.gmail.com
-   - Port: 587 (tls) ou 465 (ssl)
-   - Utilise un "App Password" (16 caractères)
-   ======================================== */
+define('MAILER', 'smtp');  
+
 define('SMTP_HOST', 'smtp.gmail.com');
 define('SMTP_PORT', 587);
-define('SMTP_USER', 'tonemail@gmail.com');     // À REMPLIR
-define('SMTP_PASS', 'ton-app-password');       // À REMPLIR (16 caractères)
-define('SMTP_SECURE', 'tls'); // 'tls' ou 'ssl'
+define('SMTP_USER', 'louayfkiri06@gmail.com');
+define('SMTP_PASS', 'mjsp lxyi pmbd gmue'); 
+define('SMTP_SECURE', 'tls');
 
-/* ========================================
-   AUTRES CONSTANTES
-   ======================================== */
-define('SITE_NAME', '2A10 - Gestion Étudiants');
-define('SITE_VERSION', '1.0.0');
+try {
+    $dsn = "mysql:host=" . DB_HOST 
+         . ";port=" . DB_PORT 
+         . ";dbname=" . DB_NAME 
+         . ";charset=" . DB_CHARSET;
 
-/* ========================================
-   INCLUSION DE PHPMailer (si Composer installé)
-   ======================================== */
+    $pdo = new PDO($dsn, DB_USER, DB_PASS, [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES   => false,
+        PDO::ATTR_STRINGIFY_FETCHES  => false
+    ]);
+} catch (PDOException $e) {
+    error_log("DB Connection Error: " . $e->getMessage());
+    die("Erreur de connexion à la base de données. Veuillez réessayer plus tard.");
+}
+
+function obtenirPDO(): PDO {
+    global $pdo;
+    return $pdo;
+}
+
 if (MAILER === 'smtp' && file_exists(__DIR__ . '/../vendor/autoload.php')) {
     require_once __DIR__ . '/../vendor/autoload.php';
 }
-
-/* ========================================
-   CONNEXION PDO (via db.php)
-   ======================================== */
-require_once __DIR__ . '/db.php';
